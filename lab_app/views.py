@@ -1,32 +1,29 @@
-from django.shortcuts import render
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
-from django.urls import reverse
-from .models import Users
+from .models import User, Lab
+from rest_framework import viewsets, status
+from .serializers import UserSerializer, LabSerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.contrib.auth import login
+from django.contrib.auth.hashers import check_password
 
-class MenuView(TemplateView):
-    template_name = 'index.html'
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
     
 
-class UserListView(ListView):
-    model = Users
-    template_name = 'users_list.html'
+class LabViewSet(viewsets.ModelViewSet):
+    queryset = Lab.objects.all()
+    serializer_class = LabSerializer
     
-class UserCreateView(CreateView):
-    model = Users
-    fields = ['nome','email','telefone', 'user_type']
-    template_name = 'users_create.html'
-    def get_success_url(self):
-        return reverse('UserListView')
-    
-class UserUpdateView(UpdateView):
-    model = Users
-    fields = ['nome','email','telefone', 'user_type']
-    template_name = 'users_update.html'
-    def get_success_url(self):
-        return reverse('UserListView')
-    
-class UserDeleteView(DeleteView):
-    model = Users
-    template_name = 'users_delete.html'
-    def get_success_url(self):
-        return reverse('UserListView')
+class LoginView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        user = User.objects.filter(email=email, password=password).first()
+
+        if user is None:
+            return Response({'error': 'Credenciais inválidas'}, status=400)
+        
+        user_data = UserSerializer(user).data
+        return Response(user_data, status=200)
+

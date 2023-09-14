@@ -1,28 +1,16 @@
-"""
-URL configuration for lab project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
-from lab_app.views import UserListView, UserCreateView, UserUpdateView, UserDeleteView, MenuView
+from rest_framework import routers
+from lab_app.views import UserViewSet, LabViewSet, LoginView
+
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'labs', LabViewSet)
+
 
 urlpatterns = [
-    path('', MenuView.as_view(), name='Menu'),
     path('admin/', admin.site.urls),
-    path('users/', UserListView.as_view(), name='UserListView'),
-    path('users/create/', UserCreateView.as_view(), name='UserCreateView'),
-    path('users/<int:pk>/update/', UserUpdateView.as_view(), name='UserUpdateView'),
-    path('users/<int:pk>/delete/', UserDeleteView.as_view(), name='UserDeleteView')
+    path('login/', LoginView.as_view(), name='login')
 ]
+
+urlpatterns += router.urls
