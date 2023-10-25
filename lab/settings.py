@@ -30,6 +30,13 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),  # Da forma configurada, o token de acesso tem 1 hora de validade :)
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=1),  
+}
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,7 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lab_app',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework.authtoken', 
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +61,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'lab.urls'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
 
 TEMPLATES = [
     {
@@ -80,7 +97,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'lab',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'root',
         'HOST':'127.0.0.1',
         'PORT':'3306',
     }
@@ -129,4 +146,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'lab_app.User'
 
